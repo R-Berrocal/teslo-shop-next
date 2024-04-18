@@ -10,6 +10,18 @@ export const authConfig: NextAuthConfig = {
     newUser: '/auth/new-account',
   },
   callbacks: {
+    authorized({ auth, request: { nextUrl } }) {
+      // const isLoggedIn = !!auth?.user;
+      // const isOnDashBoard = nextUrl.pathname.startsWith('/board');
+      // if (isOnDashBoard) {
+      //   if (isLoggedIn) return true;
+      //   return false;
+      // } else if (isLoggedIn) {
+      //   return Response.redirect(new URL('/board', nextUrl));
+      // }
+      console.log({auth})
+      return true;
+    },
     jwt({ token, user }) {
       if (user) {
         token.data = user;
