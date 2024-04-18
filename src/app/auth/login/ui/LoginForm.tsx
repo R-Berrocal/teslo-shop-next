@@ -1,7 +1,6 @@
 'use client';
 import { useEffect } from 'react';
 import { useFormState, useFormStatus } from 'react-dom';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import clsx from 'clsx';
 
@@ -10,13 +9,13 @@ import { IoInformationOutline } from 'react-icons/io5';
 
 export const LoginForm = () => {
   const [state, dispatch] = useFormState(authenticate, undefined);
-  const router = useRouter();
   useEffect(() => {
     if (state === 'Success') {
       //redireccionar
-      router.replace('/');
+      // router.replace('/');
+      window.location.replace('/');
     }
-  }, [state, router]);
+  }, [state]);
 
   return (
     <form action={dispatch} className="flex flex-col">
