@@ -19,7 +19,6 @@ export const authConfig: NextAuthConfig = {
       // } else if (isLoggedIn) {
       //   return Response.redirect(new URL('/board', nextUrl));
       // }
-      console.log({auth})
       return true;
     },
     jwt({ token, user }) {
