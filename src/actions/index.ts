@@ -5,3 +5,4 @@ export * from './auth/login';
 export * from './auth/logut';
 export * from './auth/register';
 export * from './country/get-countries';
+export * from './address/set-user-address';
