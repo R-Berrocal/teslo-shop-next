@@ -89,6 +89,7 @@ model UserAddress {
   firstName  String
   lastName   String
   address    String
+  city       String
   address2   String?
   postalCode String
   phone      String
