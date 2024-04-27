@@ -1,6 +1,6 @@
 'use client';
 
-import { setUserAddress } from '@/actions';
+import { deleteUserAddress, setUserAddress } from '@/actions';
 import type { Country } from '@/interfaces';
 import { useAddressStore } from '@/store';
 import clsx from 'clsx';
@@ -49,6 +49,7 @@ export const AddressForm = ({ countries }: Props) => {
     if (rememberAddress) {
       setUserAddress(restAddress, session?.user.id as string);
     } else {
+      deleteUserAddress(session?.user.id as string);
     }
   };
 
