@@ -7,3 +7,4 @@ export * from './auth/register';
 export * from './country/get-countries';
 export * from './address/set-user-address';
 export * from './address/delete-user.address';
+export * from './address/get-user-address';
