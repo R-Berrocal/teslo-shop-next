@@ -25,6 +25,7 @@ export async function generateMetadata(
   const { slug } = params;
   const product = await getProductBySlug(slug);
   return {
+    metadataBase: new URL('http://localhost:3000'),
     title: product?.title ?? 'Producto no encontrado',
     description: product?.description ?? '',
     openGraph: {

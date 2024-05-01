@@ -2,7 +2,6 @@
 
 import { useCartStore } from '@/store';
 import { currencyFormat } from '@/utils';
-import { redirect } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 export const OrderSummary = () => {
@@ -15,7 +14,7 @@ export const OrderSummary = () => {
     setLoaded(true);
   }, []);
 
-  if (totalItems === 0) redirect('/empty');
+  if (loaded && totalItems === 0) window.location.replace('/empty');
 
   if (!loaded) return <p>Cargando...</p>;
 
