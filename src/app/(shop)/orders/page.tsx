@@ -1,4 +1,3 @@
-// https://tailwindcomponents.com/component/hoverable-table
 import { Title } from '@/components';
 
 import Link from 'next/link';

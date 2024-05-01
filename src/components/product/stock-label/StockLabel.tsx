@@ -21,7 +21,6 @@ export const StockLabel = ({ slug }: Props) => {
     setIsLoading(false);
   };
 
-  console.log(stock);
   return (
     <>
       {isLoading ? (
