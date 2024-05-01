@@ -61,7 +61,7 @@ function LoginButton() {
   return (
     <button
       type="submit"
-      className={clsx({ 'btn-primary': !pending, 'btn-disable': pending })}
+      className={clsx({ 'btn-primary': !pending, 'btn-disabled': pending })}
       disabled={pending}
     >
       Ingresar

@@ -47,8 +47,8 @@ export const AddressForm = ({ countries, userStoredAddress = {} }: Props) => {
   }, [reset, storeAddress]);
 
   const onSubmit = async (data: FormInputs) => {
-    setAddress(data);
     const { rememberAddress, ...restAddress } = data;
+    setAddress(restAddress);
     if (rememberAddress) {
       await setUserAddress(restAddress, session?.user.id as string);
     } else {
@@ -178,7 +178,7 @@ export const AddressForm = ({ countries, userStoredAddress = {} }: Props) => {
           disabled={!isValid}
           type="submit"
           // className="btn-primary flex w-full sm:w-1/2 justify-center mt-2"
-          className={clsx({ 'btn-primary': isValid, 'btn-disable': !isValid })}
+          className={clsx({ 'btn-primary': isValid, 'btn-disabled': !isValid })}
         >
           Siguiente
         </button>
