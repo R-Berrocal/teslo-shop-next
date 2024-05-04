@@ -2,7 +2,6 @@
 
 import { Address } from '@/interfaces';
 import prisma from '@/lib/prisma';
-import { log } from 'console';
 
 export const setUserAddress = async (address: Address, userId: string) => {
   try {
