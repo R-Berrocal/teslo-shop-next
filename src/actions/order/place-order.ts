@@ -64,46 +64,90 @@ export const placeOrder = async (
   );
 
   // Crear la transaccion
+  try {
+    const prismaTx = await prisma.$transaction(async (tx) => {
+      // 1. Actualizar el stock de los productos
+      const updatedProductsPromises = products.map((product) => {
+        //Acumular los valores
+        const productQuantity = productIds
+          .filter((p) => p.productId === product.id)
+          .reduce((acc, product) => acc + product.quantity, 0);
 
-  const prismaTx = await prisma.$transaction(async (tx) => {
-    // 1. Actualizar el stock de los productos
-    // 2. Crear la ordern - Encabezado - Detalle
-    const order = await tx.order.create({
-      data: {
-        userId,
-        itemsInOrder,
-        subTotal,
-        tax,
-        total,
-        OrderItem: {
-          createMany: {
-            data: productIds.map(({ productId, quantity, size }) => ({
-              quantity,
-              size,
-              productId,
-              price:
-                products.find((product) => product.id === productId)?.price ??
-                0,
-            })),
+        if (productQuantity === 0) {
+          throw new Error(`${product.id} no tiene cantidad definida`);
+        }
+
+        return tx.product.update({
+          where: {
+            id: product.id,
+          },
+          data: {
+            inStock: {
+              decrement: productQuantity,
+            },
+          },
+        });
+      });
+
+      const updatedProducts = await Promise.all(updatedProductsPromises);
+
+      // Verificar valores negativos en las existencias = no hay stock
+
+      updatedProducts.forEach((product) => {
+        if (product.inStock < 0) {
+          throw new Error(`${product.title} no tiene stock suficiente`);
+        }
+      });
+
+      // 2. Crear la ordern - Encabezado - Detalle
+      const order = await tx.order.create({
+        data: {
+          userId,
+          itemsInOrder,
+          subTotal,
+          tax,
+          total,
+          OrderItem: {
+            createMany: {
+              data: productIds.map(({ productId, quantity, size }) => ({
+                quantity,
+                size,
+                productId,
+                price:
+                  products.find((product) => product.id === productId)?.price ??
+                  0,
+              })),
+            },
           },
         },
-      },
+      });
+
+      // Validar, si el price es cero, entonces, lanzar un error
+      // 3. Crear la direccion de la orden
+
+      const orderAddress = await tx.orderAddress.create({
+        data: {
+          orderId: order.id,
+          countryId: country,
+          ...address,
+        },
+      });
+      return {
+        order,
+        updatedProducts,
+        orderAddress,
+      };
     });
 
-    // Validar, si el price es cero, entonces, lanzar un error
-    // 3. Crear la direccion de la orden
-
-    const orderAddress = await tx.orderAddress.create({
-      data: {
-        orderId: order.id,
-        countryId: country,
-        ...address,
-      },
-    });
     return {
-      order,
-      updatedProducts: [],
-      orderAddress,
+      ok: true,
+      order: prismaTx.order,
+      prismaTx,
     };
-  });
+  } catch (error: any) {
+    return {
+      ok: false,
+      message: error?.message,
+    };
+  }
 };
