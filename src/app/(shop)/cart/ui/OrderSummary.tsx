@@ -2,9 +2,11 @@
 
 import { useCartStore } from '@/store';
 import { currencyFormat } from '@/utils';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 export const OrderSummary = () => {
+  const router = useRouter();
   const [loaded, setLoaded] = useState(false);
   const { subTotal, tax, total, totalItems } = useCartStore((state) =>
     state.getSummaryInformation()
@@ -12,9 +14,10 @@ export const OrderSummary = () => {
 
   useEffect(() => {
     setLoaded(true);
-  }, []);
-
-  if (loaded && totalItems === 0) window.location.replace('/empty');
+    if (loaded && totalItems === 0) {
+      router.replace('/empty');
+    }
+  }, [loaded, totalItems, router]);
 
   if (!loaded) return <p>Cargando...</p>;
 
