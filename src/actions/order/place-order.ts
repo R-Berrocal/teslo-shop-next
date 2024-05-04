@@ -43,21 +43,21 @@ export const placeOrder = async (
   );
 
   // Los totales de tax, subTotal, total
-  const { subtotal, tax, total } = productIds.reduce(
+  const { subTotal, tax, total } = productIds.reduce(
     (totals, item) => {
       const productQuantity = item.quantity;
       const product = products.find((product) => product.id === item.productId);
       if (!product) throw new Error(`${item.productId} not found - 500`);
 
-      const subtotal = product.price * productQuantity;
+      const subTotal = product.price * productQuantity;
 
-      totals.subtotal += subtotal;
-      totals.tax += subtotal * 0.15;
-      totals.total += subtotal * 1.15;
+      totals.subTotal += subTotal;
+      totals.tax += subTotal * 0.15;
+      totals.total += subTotal * 1.15;
       return totals;
     },
     {
-      subtotal: 0,
+      subTotal: 0,
       tax: 0,
       total: 0,
     }
@@ -68,10 +68,33 @@ export const placeOrder = async (
   const prismaTx = await prisma.$transaction(async (tx) => {
     // 1. Actualizar el stock de los productos
     // 2. Crear la ordern - Encabezado - Detalle
+    const order = await tx.order.create({
+      data: {
+        userId,
+        itemsInOrder,
+        subTotal,
+        tax,
+        total,
+        OrderItem: {
+          createMany: {
+            data: productIds.map(({ productId, quantity, size }) => ({
+              quantity,
+              size,
+              productId,
+              price:
+                products.find((product) => product.id === productId)?.price ??
+                0,
+            })),
+          },
+        },
+      },
+    });
+
+    // Validar, si el price es cero, entonces, lanzar un error
     // 3. Crear la direccion de la orden
 
     return {
-      order: 0,
+      order,
       updatedProducts: [],
       orderAddress: 0,
     };
