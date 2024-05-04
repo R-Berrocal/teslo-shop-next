@@ -43,4 +43,26 @@ export const placeOrder = async (
   );
 
   // Los totales de tax, subTotal, total
+  const { subtotal, tax, total } = productIds.reduce(
+    (totals, item) => {
+      const productQuantity = item.quantity;
+      const product = products.find((product) => product.id === item.productId);
+      if (!product) throw new Error(`${item.productId} not found - 500`);
+
+      const subtotal = product.price * productQuantity;
+
+      totals.subtotal += subtotal;
+      totals.tax += subtotal * 0.15;
+      totals.total += subtotal * 1.15;
+      return totals;
+    },
+    {
+      subtotal: 0,
+      tax: 0,
+      total: 0,
+    }
+  );
+
+  // Crear la transaccion
+
 };
