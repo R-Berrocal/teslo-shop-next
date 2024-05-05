@@ -31,19 +31,6 @@ export default async function OrderIdPage({ params }: Props) {
           {/* carrito */}
 
           <div className="flex flex-col mt-5">
-            <div
-              className={clsx(
-                'flex items-center ronded-lg py-2 px-3.5 text-xs font-bold text-white mb-5',
-                {
-                  'bg-red-500': !order.isPaid,
-                  'bg-green-700': order.isPaid,
-                }
-              )}
-            >
-              <IoCardOutline size={30} />
-              <span>{order.isPaid ? 'Pagada' : 'Pendiente de pago'}</span>
-            </div>
-
             {/* Items */}
             {order.OrderItem.map((orderItem) => (
               <div key={orderItem.id} className="flex mb-5">
@@ -80,7 +67,7 @@ export default async function OrderIdPage({ params }: Props) {
               </p>
 
               <p>
-                {order.OrderAddress?.countryId}. {order.OrderAddress?.city}{' '}
+                {order.OrderAddress?.country.name} - {order.OrderAddress?.city}{' '}
               </p>
               <p>CP {order.OrderAddress?.postalCode}</p>
               <p>CEL. {order.OrderAddress?.phone}</p>

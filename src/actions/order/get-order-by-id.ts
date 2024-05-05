@@ -18,7 +18,15 @@ export const getOrderById = async (id: string) => {
         id,
       },
       include: {
-        OrderAddress: true,
+        OrderAddress: {
+          include: {
+            country: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
         OrderItem: {
           select: {
             id: true,
