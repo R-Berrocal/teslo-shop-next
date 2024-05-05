@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import clsx from 'clsx';
-import { useRouter } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import { placeOrder } from '@/actions';
 import { useAddressStore, useCartStore } from '@/store';
 import { currencyFormat } from '@/utils';
@@ -24,6 +24,9 @@ export const PlaceOrder = () => {
     setLoaded(true);
   }, []);
 
+  if (loaded && cart.length === 0 && !isPlacingOrder) {
+    redirect('/');
+  }
   const onPlaceOrder = async () => {
     setIsPlacingOrder(true);
 

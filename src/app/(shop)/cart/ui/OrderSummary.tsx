@@ -2,11 +2,10 @@
 
 import { useCartStore } from '@/store';
 import { currencyFormat } from '@/utils';
-import { useRouter } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 export const OrderSummary = () => {
-  const router = useRouter();
   const [loaded, setLoaded] = useState(false);
   const { subTotal, tax, total, totalItems } = useCartStore((state) =>
     state.getSummaryInformation()
@@ -14,10 +13,14 @@ export const OrderSummary = () => {
 
   useEffect(() => {
     setLoaded(true);
+  }, []);
+
+  useEffect(() => {
     if (loaded && totalItems === 0) {
-      router.replace('/empty');
+      // Llama a redirect dentro de un useEffect separado
+      redirect('/empty');
     }
-  }, [loaded, totalItems, router]);
+  }, [loaded, totalItems]);
 
   if (!loaded) return <p>Cargando...</p>;
 
