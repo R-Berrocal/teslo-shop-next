@@ -1,7 +1,5 @@
 import { redirect } from 'next/navigation';
 import Image from 'next/image';
-import clsx from 'clsx';
-import { IoCardOutline } from 'react-icons/io5';
 import { getOrderById } from '@/actions';
 import { PayPalButton, Title } from '@/components';
 import { currencyFormat } from '@/utils';
