@@ -5,6 +5,7 @@ import prisma from './lib/prisma';
 import credentials from 'next-auth/providers/credentials';
 
 export const authConfig: NextAuthConfig = {
+  trustHost: true,
   pages: {
     signIn: '/auth/login',
     newUser: '/auth/new-account',

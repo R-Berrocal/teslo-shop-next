@@ -15,12 +15,10 @@ export const OrderSummary = () => {
     setLoaded(true);
   }, []);
 
-  useEffect(() => {
-    if (loaded && totalItems === 0) {
-      // Llama a redirect dentro de un useEffect separado
-      redirect('/empty');
-    }
-  }, [loaded, totalItems]);
+  if (loaded && totalItems === 0) {
+    // Llama a redirect dentro de un useEffect separado
+    redirect('/empty');
+  }
 
   if (!loaded) return <p>Cargando...</p>;
 
