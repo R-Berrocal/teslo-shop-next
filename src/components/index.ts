@@ -11,4 +11,5 @@ export * from './product/quantity-selector/QuantitySelector';
 export * from './product/slides-show/ProductSlideShow';
 export * from './product/slides-show/ProductSlideShowMobile';
 export * from './product/stock-label/StockLabel';
-export * from './provider/Provider';
+export * from './provider/Providers';
+export * from './paypal/PayPalButton';
