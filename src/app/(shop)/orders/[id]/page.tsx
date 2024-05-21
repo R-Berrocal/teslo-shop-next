@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 import Image from 'next/image';
 import { getOrderById } from '@/actions';
-import { PayPalButton, Title } from '@/components';
+import { OrderStatus, PayPalButton, Title } from '@/components';
 import { currencyFormat } from '@/utils';
 
 interface Props {
@@ -29,6 +29,7 @@ export default async function OrderIdPage({ params }: Props) {
           {/* carrito */}
 
           <div className="flex flex-col mt-5">
+            <OrderStatus isPaid={order.isPaid} />
             {/* Items */}
             {order.OrderItem.map((orderItem) => (
               <div key={orderItem.id} className="flex mb-5">
@@ -96,7 +97,11 @@ export default async function OrderIdPage({ params }: Props) {
               </span>
             </div>
             <div className="mt-5 mb-2 w-full">
-              <PayPalButton amount={order.total} orderId={order.id} />
+              {order.isPaid ? (
+                <OrderStatus isPaid={order.isPaid} />
+              ) : (
+                <PayPalButton amount={order.total} orderId={order.id} />
+              )}
             </div>
           </div>
         </div>
