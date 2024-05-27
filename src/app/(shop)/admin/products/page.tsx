@@ -1,22 +1,32 @@
 export const revalidate = 0;
 
-import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { IoCardOutline } from 'react-icons/io5';
-import clsx from 'clsx';
-import { getPaginatedOrders } from '@/actions';
-import { Title } from '@/components';
+import { getPaginatedProductsWithImages } from '@/actions';
+import { Pagination, Title } from '@/components';
+import Image from 'next/image';
+import { currencyFormat } from '@/utils';
 
-export default async function OrdersPage() {
-  const { ok, orders = [] } = await getPaginatedOrders();
+interface Props {
+  searchParams: {
+    page?: string;
+    take?: string;
+  };
+}
 
-  if (!ok) {
-    redirect('/auth/login');
-  }
+export default async function OrdersPage({ searchParams }: Props) {
+  const page = Number(searchParams.page) ?? 1;
+  const { products, totalPages } = await getPaginatedProductsWithImages({
+    page,
+  });
 
   return (
     <div className="mx-3">
       <Title title="Products" />
+      <div className="flex justify-end mb-5">
+        <Link href="/admin/products/new" className="btn-primary">
+          Nuevo producto
+        </Link>
+      </div>
 
       <div className="mb-10">
         <table className="min-w-full">
@@ -26,68 +36,82 @@ export default async function OrdersPage() {
                 scope="col"
                 className="text-sm font-medium text-gray-900 px-6 py-4 text-left"
               >
-                #ID
+                Imagen
               </th>
               <th
                 scope="col"
                 className="text-sm font-medium text-gray-900 px-6 py-4 text-left"
               >
-                Nombre completo
+                Titulo
               </th>
               <th
                 scope="col"
                 className="text-sm font-medium text-gray-900 px-6 py-4 text-left"
               >
-                Estado
+                Precio
               </th>
               <th
                 scope="col"
                 className="text-sm font-medium text-gray-900 px-6 py-4 text-left"
               >
-                Opciones
+                Genero
+              </th>
+              <th
+                scope="col"
+                className="text-sm font-medium text-gray-900 px-6 py-4 text-left"
+              >
+                Inventario
+              </th>
+              <th
+                scope="col"
+                className="text-sm font-medium text-gray-900 px-6 py-4 text-left"
+              >
+                Tallas
               </th>
             </tr>
           </thead>
           <tbody>
-            {orders.map((order) => (
+            {products.map((product) => (
               <tr
-                key={order.id}
+                key={product.id}
                 className="bg-white border-b transition duration-300 ease-in-out hover:bg-gray-100"
               >
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  {order.id.split('-').at(-1)}
+                  <Link href={`/product/${product.slug}`}>
+                    <Image
+                      src={`/products/${product.images[0]}`}
+                      alt={product.title}
+                      width={80}
+                      height={80}
+                      className="w-20 h-20 object-cover rounded"
+                    />
+                  </Link>
                 </td>
                 <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                  {order.OrderAddress?.firstName} {order.OrderAddress?.lastName}
-                </td>
-                <td className="flex items-center text-sm  text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                  <IoCardOutline
-                    className={clsx('mx-2', {
-                      'text-green-800': order.isPaid,
-                      'text-red-500': !order.isPaid,
-                    })}
-                  />
-                  <span
-                    className={clsx('mx-2', {
-                      'text-green-800': order.isPaid,
-                      'text-red-500': !order.isPaid,
-                    })}
-                  >
-                    {order.isPaid ? 'Pagada' : 'No Pagada'}
-                  </span>
-                </td>
-                <td className="text-sm text-gray-900 font-light px-6 ">
                   <Link
-                    href={`/orders/${order.id}`}
+                    href={`/admin/products/${product.slug}`}
                     className="hover:underline"
                   >
-                    Ver orden
+                    {product.title}
                   </Link>
+                </td>
+                <td className="text-sm font-bold  text-gray-900  px-6 py-4 whitespace-nowrap">
+                  {currencyFormat(product.price)}
+                </td>
+                <td className="text-sm font-light  text-gray-900  px-6 py-4 whitespace-nowrap">
+                  {product.gender}
+                </td>
+                <td className="text-sm font-bold  text-gray-900  px-6 py-4 whitespace-nowrap">
+                  {product.inStock}
+                </td>
+                <td className="text-sm font-bold  text-gray-900  px-6 py-4 whitespace-nowrap">
+                  {product.sizes.join(', ')}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+        <Pagination totalPages={totalPages} />
       </div>
     </div>
   );
